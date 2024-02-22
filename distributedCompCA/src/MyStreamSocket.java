@@ -11,16 +11,14 @@ public class MyStreamSocket extends Socket {
    private BufferedReader input;
    private PrintWriter output;
 
-   MyStreamSocket(InetAddress acceptorHost,
-                  int acceptorPort ) throws SocketException,
-                                   IOException{
+   MyStreamSocket(InetAddress acceptorHost, int acceptorPort ) throws SocketException, IOException{
       socket = new Socket(acceptorHost, acceptorPort );
       setStreams( );
 
    }
 
    MyStreamSocket(Socket socket)  throws IOException {
-      this.socket = socket;
+       this.socket = socket;
       setStreams( );
    }
 
@@ -45,11 +43,10 @@ public class MyStreamSocket extends Socket {
    } // end sendMessage
 
    public String receiveMessage( )
-		throws IOException {	
-      // read a line from the data stream
+		throws IOException {
       String message = input.readLine( );  
       return message;
-   } //end receiveMessage
+   }
 
    public void close( )
 		throws IOException {	
