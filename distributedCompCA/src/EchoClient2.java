@@ -23,9 +23,10 @@ public class EchoClient2 {
             new EchoClientHelper2(hostName, portNum);
          boolean done = false;
          String message, echo;
+         System.out.println("Welcome to SMP Client. Please LOGON before issuing any other commands");
          while (!done) {
-            System.out.println("Enter a line to receive an echo "
-               + "from the server, or a single period to quit.");
+
+
             message = br.readLine( );
             if ((message.trim()).equals (endMessage)){
                done = true;
@@ -35,10 +36,10 @@ public class EchoClient2 {
                echo = helper.getEcho( message);
                System.out.println(echo);
             }
-          } // end while
-      } // end try  
+          }
+      }
       catch (Exception ex) {
          ex.printStackTrace( );
-      } //end catch
-   } //end main
-} // end class
+      }
+   }
+}

@@ -9,5 +9,6 @@ public class UserSession {
 
     public UserSession(String username, String password) {
         this.username = username;
+        this.messages = new ArrayList<String>();
     }
 }

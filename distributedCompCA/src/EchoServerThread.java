@@ -1,4 +1,3 @@
-import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -34,8 +33,8 @@ class EchoServerThread implements Runnable {
              else {
 
                  if(parseReqType(message) == GlobalErrorMessages.NO_ERR){
-
-                     myDataSocket.sendMessage(message);
+                     System.out.println("No error");
+                     myDataSocket.sendMessage(getCommand(message));
                  }
                  else{
                      myDataSocket.sendMessage(getErrType(parseReqType(message)));
@@ -50,19 +49,24 @@ class EchoServerThread implements Runnable {
    }
 
     public static GlobalErrorMessages parseReqType(String request) {
-        StringBuilder sb = new StringBuilder();
 
         if(request.length() < 6){
+            System.out.println("Invalid command length");
             return GlobalErrorMessages.INVALID_CMD_LENGTH;
+
         }
         else if(request.charAt(5) != ' '){
+            System.out.println("Invalid command format");
             return GlobalErrorMessages.INVALID_CMD_FORMAT;
         }
-        else if(!request.contains("LOGON") || !request.contains("MSGUP")
-                || !request.contains("MSGDL") || !request.contains("LGOFF")){
+        else if(!request.contains("LOGON") && !request.contains("MSGUP")
+                && !request.contains("MSGDL") && !request.contains("LGOFF")){
+            System.out.println(!request.contains("LOGON"));
+            System.out.println("Invalid command type");
             return GlobalErrorMessages.INVALID_CMD_TYPE;
         }
         else{
+            System.out.println("No error");
             return GlobalErrorMessages.NO_ERR;
         }
     }
@@ -79,9 +83,27 @@ class EchoServerThread implements Runnable {
         }
     }
 
+    public static String getCommand(String request){
+
+
+       switch (request.substring(0, 5)){
+           case "LOGON":
+               return logon("username", "password");
+           case "LGOFF":
+               return logoff();
+           case "MSGUP":
+               return uploadMessage(request.substring(6, request.length()));
+           case "MSGDL":
+               return downloadMessages();
+       }
+
+       return "default";
+    }
+
     public static String logon(String username, String password){
        user = new UserSession(username, password);
-       return "";
+       return (username + " has logged on. Welcome! \n" +
+               "Please Upload a message or Download messages, or Log off");
     }
 
     public static String logoff(){
@@ -90,10 +112,20 @@ class EchoServerThread implements Runnable {
 
     public static String uploadMessage(String message){
        user.messages.add(message);
-       return "";
+       return "Message uploaded successfully";
     }
 
-    public static ArrayList<String> downloadMessages(){
-         return user.messages;
+    public static String downloadMessages(){
+       StringBuilder sb = new StringBuilder();
+
+       //iterate through the messages and append them to the stringbuilder, use a regular for
+         //loop to get the index of the message
+         for(int i = 0; i < user.messages.size(); i++){
+              sb.append(user.messages.get(i));
+              sb.append(" ");
+             System.out.println(user.messages.get(i));
+            }
+
+       return sb.toString();
     }
 }
