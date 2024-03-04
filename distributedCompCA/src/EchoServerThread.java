@@ -49,15 +49,15 @@ class EchoServerThread implements Runnable {
 
     public static GlobalErrorMessages parseReqType(String request) {
 
-        if(request.length() < 6){
+        if(request.length() < 5){
             System.out.println("Invalid command length");
             return GlobalErrorMessages.INVALID_CMD_LENGTH;
 
         }
-        else if(request.charAt(5) != ' '){
-            System.out.println("Invalid command format");
-            return GlobalErrorMessages.INVALID_CMD_FORMAT;
-        }
+//        else if(request.charAt(5) != ' '){
+//            System.out.println("Invalid command format");
+//            return GlobalErrorMessages.INVALID_CMD_FORMAT;
+//        }
         else if(!request.contains("LOGON") && !request.contains("MSGUP")
                 && !request.contains("MSGDL") && !request.contains("LGOFF")){
             System.out.println(!request.contains("LOGON"));
@@ -87,13 +87,33 @@ class EchoServerThread implements Runnable {
 
        switch (request.substring(0, 5)){
            case "LOGON":
-               return logon("username", "password");
+               System.out.println(user);
+               if (user != null){
+                   return "USER ALREADY LOGGED IN";
+               }else{
+                   return logon("username", "password");
+               }
            case "LGOFF":
-               return logoff();
+               if (user == null){
+                   return "USER NOT LOGGED IN";
+               }
+               else{
+                     return logoff();
+               }
            case "MSGUP":
-               return uploadMessage(request.substring(6, request.length()));
+               if (user == null){
+                   return "USER NOT LOGGED IN";
+               }
+               else{
+                   return uploadMessage(request.substring(6, request.length()));
+               }
            case "MSGDL":
-               return downloadMessages();
+               if (user == null){
+                   return "USER NOT LOGGED IN";
+               }
+               else{
+                     return downloadMessages();
+               }
        }
 
        return "default";
