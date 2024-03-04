@@ -23,10 +23,9 @@ class EchoServerThread implements Runnable {
       try {
          while (!done) {
              message = myDataSocket.receiveMessage( );
-/**/         System.out.println("message received: "+ message);
+             System.out.println("message received: "+ message);
              if ((message.trim()).equals (endMessage)){
-
-/**/            System.out.println("Session over.");
+                System.out.println("Session over.");
                 myDataSocket.close( );
                 done = true;
              }
@@ -102,12 +101,13 @@ class EchoServerThread implements Runnable {
 
     public static String logon(String username, String password){
        user = new UserSession(username, password);
-       return (username + " has logged on. Welcome! \n" +
-               "Please Upload a message or Download messages, or Log off");
+       return (username + " has logged on. Welcome! Please Upload a message or Download messages, or Log off");
     }
 
     public static String logoff(){
-       return "";
+
+       user = null;
+       return "You have been logged out!";
     }
 
     public static String uploadMessage(String message){
@@ -118,13 +118,11 @@ class EchoServerThread implements Runnable {
     public static String downloadMessages(){
        StringBuilder sb = new StringBuilder();
 
-       //iterate through the messages and append them to the stringbuilder, use a regular for
-         //loop to get the index of the message
-         for(int i = 0; i < user.messages.size(); i++){
-              sb.append(user.messages.get(i));
-              sb.append(" ");
-             System.out.println(user.messages.get(i));
-            }
+       for(int i = 0; i < user.messages.size(); i++){
+           sb.append(user.messages.get(i));
+           sb.append(" ");
+           System.out.println(user.messages.get(i));
+       }
 
        return sb.toString();
     }

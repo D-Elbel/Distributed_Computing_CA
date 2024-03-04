@@ -25,8 +25,6 @@ public class EchoClient2 {
          String message, echo;
          System.out.println("Welcome to SMP Client. Please LOGON before issuing any other commands");
          while (!done) {
-
-
             message = br.readLine( );
             if ((message.trim()).equals (endMessage)){
                done = true;
