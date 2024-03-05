@@ -3,60 +3,126 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class SMPClientUI extends JFrame {
-    private JTextField messageField;
     private JTextArea chatArea;
-    private JButton sendButton;
+    private JTextField messageField;
+    private JButton sendButton, downloadButton, logOffButton, logonButton;
     private EchoClientHelper2 helper;
+    private JPanel buttonsPanel;
 
     public SMPClientUI() {
         createUI();
-        connectToServer("localhost", "7");
     }
 
     private void createUI() {
         setTitle("Echo Client");
-        setSize(400, 360);
+        setSize(400, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        messageField = new JTextField();
-        messageField.setPreferredSize(new Dimension(400, 20));
         chatArea = new JTextArea();
-        chatArea.setPreferredSize(new Dimension(400, 240));
         chatArea.setEditable(false);
+        chatArea.setText("Welcome to SMP Client. \n Please LOGON with your username and password 😀\n");
+        add(new JScrollPane(chatArea), BorderLayout.CENTER);
 
-        sendButton = new JButton("Send Message");
+
+        logonButton = new JButton("LOGON");
+        logonButton.addActionListener(this::logon);
+
+        messageField = new JTextField(25);
+        sendButton = new JButton("Upload Message");
+        downloadButton = new JButton("Download All Messages");
+        logOffButton = new JButton("Log Off");
 
         sendButton.addActionListener(this::sendMessage);
+        downloadButton.addActionListener(this::downloadMessages);
+        logOffButton.addActionListener(this::logOff);
 
-        panel.add(new JScrollPane(chatArea));
-        panel.add(messageField);
-        panel.add(sendButton);
 
-        add(panel);
+        buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS)); // Changed to BoxLayout for vertical stacking
+        buttonsPanel.add(logonButton);
+
+        buttonsPanel.add(Box.createVerticalStrut(5));
+        add(buttonsPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
-    private void connectToServer(String host, String port) {
-        try {
-            helper = new EchoClientHelper2(host, port);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void logon(ActionEvent event) {
+        JTextField usernameField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+        final JComponent[] inputs = new JComponent[] {
+                new JLabel("Username"),
+                usernameField,
+                new JLabel("Password"),
+                passwordField
+        };
+        int result = JOptionPane.showConfirmDialog(this, inputs, "Login", JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+            try {
+                helper = new EchoClientHelper2("localhost", "7");
+                String response = helper.getEcho("LOGON " + username + " " + password);
+                chatArea.append("Logon response: " + response + "\n");
+                // Assuming successful login
+                updateUIForLoggedInUser();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private void updateUIForLoggedInUser() {
+        buttonsPanel.removeAll();
+        buttonsPanel.add(messageField);
+        buttonsPanel.add(sendButton);
+        buttonsPanel.add(downloadButton);
+        buttonsPanel.add(logOffButton);
+        buttonsPanel.revalidate();
+        buttonsPanel.repaint();
     }
 
     private void sendMessage(ActionEvent event) {
         try {
             String message = messageField.getText();
-            String response = helper.getEcho(message);
+            String response = helper.getEcho("MSGUP " + message);
             chatArea.append("Server: " + response + "\n");
             messageField.setText("");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void downloadMessages(ActionEvent event) {
+        try {
+            String response = helper.getEcho("MSGDL");
+            chatArea.append("Download Initiated: " + response + "\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logOff(ActionEvent event) {
+        try {
+            String response = helper.getEcho("LGOFF");
+            chatArea.append("Logged Off: " + response + "\n");
+
+            resetUIForLoggedOutUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void resetUIForLoggedOutUser() {
+        buttonsPanel.removeAll();
+        buttonsPanel.add(logonButton);
+
+        chatArea.setText("");
+
+        buttonsPanel.revalidate();
+        buttonsPanel.repaint();
     }
 
     public static void main(String[] args) {
