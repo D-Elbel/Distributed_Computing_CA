@@ -59,7 +59,8 @@ class EchoServerThread implements Runnable {
 //            return GlobalErrorMessages.INVALID_CMD_FORMAT;
 //        }
         else if(!request.contains("LOGON") && !request.contains("MSGUP")
-                && !request.contains("MSGDL") && !request.contains("LGOFF")){
+                && !request.contains("MSGDL") && !request.contains("LGOFF")
+                && !request.contains("SPMSG")){
             System.out.println(!request.contains("LOGON"));
             System.out.println("Invalid command type");
             return GlobalErrorMessages.INVALID_CMD_TYPE;
@@ -114,6 +115,13 @@ class EchoServerThread implements Runnable {
                else{
                      return downloadMessages();
                }
+           case "SPMSG":
+               if (user == null){
+                   return "USER NOT LOGGED IN";
+               }
+               else{
+                   return downloadSpecificMessage(request.substring(6, request.length()));
+               }
        }
 
        return "default";
@@ -145,5 +153,10 @@ class EchoServerThread implements Runnable {
        }
 
        return sb.toString();
+    }
+
+    public static String downloadSpecificMessage(String messageID){
+        System.out.println(messageID);
+        return user.messages.get(Integer.parseInt(messageID.replace(" ", "")));
     }
 }
