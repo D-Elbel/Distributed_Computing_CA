@@ -10,14 +10,19 @@ class EchoServerThread implements Runnable {
    static final String endMessage = ".";
    MyStreamSocket myDataSocket;
    boolean isLoggedIn;
-   static UserSession user;
+   UserSession user;
 
    EchoServerThread(MyStreamSocket myDataSocket) {
       this.myDataSocket = myDataSocket;
       this.isLoggedIn = false;
+      this.user = null;
    }
- 
-   public void run( ) {
+
+    public void setUser(UserSession user) {
+        this.user = user;
+    }
+
+    public void run( ) {
       boolean done = false;
       String message;
       try {
@@ -83,7 +88,7 @@ class EchoServerThread implements Runnable {
         }
     }
 
-    public static String getCommand(String request){
+    public String getCommand(String request){
 
 
        switch (request.substring(0, 5)){
@@ -127,23 +132,23 @@ class EchoServerThread implements Runnable {
        return "default";
     }
 
-    public static String logon(String username, String password){
+    public String logon(String username, String password){
        user = new UserSession(username, password);
        return (username + " has logged on. Welcome! Please Upload a message or Download messages, or Log off");
     }
 
-    public static String logoff(){
+    public  String logoff(){
 
        user = null;
        return "You have been logged out!";
     }
 
-    public static String uploadMessage(String message){
+    public String uploadMessage(String message){
        user.messages.add(message);
        return "Message uploaded successfully";
     }
 
-    public static String downloadMessages(){
+    public String downloadMessages(){
        StringBuilder sb = new StringBuilder();
 
        for(int i = 0; i < user.messages.size(); i++){
@@ -155,7 +160,7 @@ class EchoServerThread implements Runnable {
        return sb.toString();
     }
 
-    public static String downloadSpecificMessage(String messageID){
+    public String downloadSpecificMessage(String messageID){
         System.out.println(messageID);
         return user.messages.get(Integer.parseInt(messageID.replace(" ", "")));
     }
