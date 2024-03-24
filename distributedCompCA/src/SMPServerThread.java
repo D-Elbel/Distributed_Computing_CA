@@ -1,18 +1,16 @@
-import java.util.ArrayList;
-
 /**
  * This module is to be used with a concurrent Echo server.
  * Its run method carries out the logic of a client session.
  * @author M. L. Liu
  */
 
-class EchoServerThread implements Runnable {
+class SMPServerThread implements Runnable {
    static final String endMessage = ".";
    MyStreamSocket myDataSocket;
    boolean isLoggedIn;
    UserSession user;
 
-   EchoServerThread(MyStreamSocket myDataSocket) {
+   SMPServerThread(MyStreamSocket myDataSocket) {
       this.myDataSocket = myDataSocket;
       this.isLoggedIn = false;
       this.user = null;

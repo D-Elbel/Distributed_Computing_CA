@@ -1,9 +1,8 @@
 import javax.net.ssl.*;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.security.KeyStore;
 
-public class EchoServer3 {
+public class SMPServer {
     public static void main(String[] args) {
         int serverPort = 7;    // default port
 
@@ -34,7 +33,7 @@ public class EchoServer3 {
 
                 MyStreamSocket myDataSocket = new MyStreamSocket(clientSocket);
 
-                Thread thread = new Thread(new EchoServerThread(myDataSocket));
+                Thread thread = new Thread(new SMPServerThread(myDataSocket));
                 thread.start();
             }
         } catch (Exception e) {

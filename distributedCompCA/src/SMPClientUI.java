@@ -1,13 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.SSLSocket;
+
 public class SMPClientUI extends JFrame {
     private JTextArea chatArea;
     private JTextField messageField, messageIdField; // Added messageIdField
     private JButton sendButton, downloadButton, logOffButton, logonButton, downloadByIdButton; // Added downloadByIdButton
-    private EchoClientHelper2 helper;
+    private SMPClientHelper helper;
     private JPanel buttonsPanel;
 
     public SMPClientUI() {
@@ -63,7 +62,7 @@ public class SMPClientUI extends JFrame {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             try {
-                helper = new EchoClientHelper2("localhost", "7");
+                helper = new SMPClientHelper("localhost", "7");
                 String response = helper.getEcho("LOGON " + username + " " + password);
                 chatArea.append("Logon response: " + response + "\n");
                 // Assuming successful login

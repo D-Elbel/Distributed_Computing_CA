@@ -19,8 +19,8 @@ public class EchoClient2 {
          String portNum = br.readLine();
          if (portNum.length() == 0)
             portNum = "7";          // default port number
-         EchoClientHelper2 helper = 
-            new EchoClientHelper2(hostName, portNum);
+         SMPClientHelper helper =
+            new SMPClientHelper(hostName, portNum);
          boolean done = false;
          String message, echo;
          System.out.println("Welcome to SMP Client. Please LOGON before issuing any other commands");

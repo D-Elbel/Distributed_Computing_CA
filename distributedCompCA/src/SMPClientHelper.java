@@ -5,13 +5,13 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.security.KeyStore;
 
-public class EchoClientHelper2 {
+public class SMPClientHelper {
    static final String endMessage = ".";
    private MyStreamSocket mySocket;
    private InetAddress serverHost;
    private int serverPort;
 
-   EchoClientHelper2(String hostName, String portNum) throws Exception {
+   SMPClientHelper(String hostName, String portNum) throws Exception {
       this.serverHost = InetAddress.getByName(hostName);
       this.serverPort = Integer.parseInt(portNum);
 
