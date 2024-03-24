@@ -1,7 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLSocket;
 public class SMPClientUI extends JFrame {
     private JTextArea chatArea;
     private JTextField messageField, messageIdField; // Added messageIdField

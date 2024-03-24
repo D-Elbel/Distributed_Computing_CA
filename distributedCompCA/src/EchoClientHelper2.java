@@ -1,43 +1,50 @@
-import java.net.*;
-import java.io.*;
-
-/**
- * This class is a module which provides the application logic
- * for an Echo client using stream-mode socket.
- * @author M. L. Liu
- */
+import javax.net.ssl.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.security.KeyStore;
 
 public class EchoClientHelper2 {
-
    static final String endMessage = ".";
    private MyStreamSocket mySocket;
    private InetAddress serverHost;
    private int serverPort;
 
-   EchoClientHelper2(String hostName,
-                     String portNum) throws SocketException,
-                     UnknownHostException, IOException {
-                                     
-  	   this.serverHost = InetAddress.getByName(hostName);
-  		this.serverPort = Integer.parseInt(portNum);
-      //Instantiates a stream-mode socket and wait for a connection.
-   	this.mySocket = new MyStreamSocket(this.serverHost,
-         this.serverPort); 
-/**/  System.out.println("Connection request made");
-   } // end constructor
-	
-   public String getEcho( String message) throws SocketException,
-      IOException{     
-      String echo = "";    
-      mySocket.sendMessage( message);
-	   // now receive the echo
+   EchoClientHelper2(String hostName, String portNum) throws Exception {
+      this.serverHost = InetAddress.getByName(hostName);
+      this.serverPort = Integer.parseInt(portNum);
+
+      // Load the truststore
+      String tsName = "C:\\Users\\Darragh\\Distributed_Computing_CA\\distributedCompCA\\src\\clienttruststore.jks"; // replace with the path to your truststore
+      char tsPass[] = "123456".toCharArray(); // replace with your truststore password
+      KeyStore ts = KeyStore.getInstance("JKS");
+      ts.load(new FileInputStream(tsName), tsPass);
+
+      TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+      tmf.init(ts);
+
+      SSLContext sc = SSLContext.getInstance("TLS");
+      sc.init(null, tmf.getTrustManagers(), null);
+
+      SSLSocketFactory sslSocketFactory = sc.getSocketFactory();
+
+      SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(serverHost, serverPort);
+
+      this.mySocket = new MyStreamSocket(sslSocket);
+      System.out.println("Connection request made");
+   }
+
+   public String getEcho(String message) throws IOException, IOException {
+      String echo = "";
+      mySocket.sendMessage(message);
+      // now receive the echo
       echo = mySocket.receiveMessage();
       return echo;
-   } // end getEcho
+   }
 
-   public void done( ) throws SocketException,
-                              IOException{
+   public void done() throws SocketException, IOException {
       mySocket.sendMessage(endMessage);
-      mySocket.close( );
-   } // end done 
-} //end class
+      mySocket.close();
+   }
+}
