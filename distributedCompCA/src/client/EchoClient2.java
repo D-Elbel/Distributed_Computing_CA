@@ -1,17 +1,19 @@
+package client;
+
 import java.io.*;
 
 /**
  * This module contains the presentaton logic of an Echo Client.
  * @author M. L. Liu
  */
-public class EchoClient1 {
+public class EchoClient2 {
    static final String endMessage = ".";
    public static void main(String[] args) {
       InputStreamReader is = new InputStreamReader(System.in);
       BufferedReader br = new BufferedReader(is);
       try {
          System.out.println("Welcome to the Echo client.\n" +
-                            "What is the name of the server host?");
+            "What is the name of the server host?");
          String hostName = br.readLine();
          if (hostName.length() == 0) // if user did not enter a name
             hostName = "localhost";  //   use the default host name
@@ -19,13 +21,12 @@ public class EchoClient1 {
          String portNum = br.readLine();
          if (portNum.length() == 0)
             portNum = "7";          // default port number
-         EchoClientHelper1 helper = 
-            new EchoClientHelper1(hostName, portNum);
+         SMPClientHelper helper =
+            new SMPClientHelper(hostName, portNum);
          boolean done = false;
          String message, echo;
+         System.out.println("Welcome to SMP Client. Please LOGON before issuing any other commands");
          while (!done) {
-            System.out.println("Enter a line to receive an echo back from the server, "
-                            + "or a single peroid to quit.");
             message = br.readLine( );
             if ((message.trim()).equals (endMessage)){
                done = true;
@@ -35,10 +36,10 @@ public class EchoClient1 {
                echo = helper.getEcho( message);
                System.out.println(echo);
             }
-          } // end while
-      } // end try  
+          }
+      }
       catch (Exception ex) {
          ex.printStackTrace( );
-      } // end catch
-   } //end main
-} // end class      
+      }
+   }
+}

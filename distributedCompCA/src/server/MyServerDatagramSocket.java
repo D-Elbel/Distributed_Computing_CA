@@ -1,3 +1,7 @@
+package server;
+
+import client.DatagramMessage;
+
 import java.net.*;
 import java.io.*;
 

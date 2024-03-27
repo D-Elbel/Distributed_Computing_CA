@@ -1,3 +1,5 @@
+package client;
+
 import javax.net.ssl.*;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,9 +17,8 @@ public class SMPClientHelper {
       this.serverHost = InetAddress.getByName(hostName);
       this.serverPort = Integer.parseInt(portNum);
 
-      // Load the truststore
-      String tsName = "C:\\Users\\Darragh\\Distributed_Computing_CA\\distributedCompCA\\src\\clienttruststore.jks"; // replace with the path to your truststore
-      char tsPass[] = "123456".toCharArray(); // replace with your truststore password
+      String tsName = "C:\\Users\\Darragh\\Distributed_Computing_CA\\distributedCompCA\\src\\client\\clienttruststore.jks";
+      char tsPass[] = "123456".toCharArray();
       KeyStore ts = KeyStore.getInstance("JKS");
       ts.load(new FileInputStream(tsName), tsPass);
 

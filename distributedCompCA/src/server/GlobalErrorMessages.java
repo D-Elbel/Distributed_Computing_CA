@@ -1,3 +1,5 @@
+package server;
+
 public enum GlobalErrorMessages {
     NO_ERR,
     INVALID_CMD_LENGTH,

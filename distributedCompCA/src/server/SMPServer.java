@@ -1,3 +1,5 @@
+package server;
+
 import javax.net.ssl.*;
 import java.io.FileInputStream;
 import java.security.KeyStore;
@@ -10,7 +12,7 @@ public class SMPServer {
             serverPort = Integer.parseInt(args[0]);
 
         try {
-            String ksName = "C:\\Users\\Darragh\\Distributed_Computing_CA\\distributedCompCA\\src\\serverkeystore.jks";
+            String ksName = "C:\\Users\\Darragh\\Distributed_Computing_CA\\distributedCompCA\\src\\server\\serverkeystore.jks";
             char ksPass[] = "123456".toCharArray();
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(new FileInputStream(ksName), ksPass);
