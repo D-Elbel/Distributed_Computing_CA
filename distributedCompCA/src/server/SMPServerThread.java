@@ -59,10 +59,7 @@ class SMPServerThread implements Runnable {
             return GlobalErrorMessages.INVALID_CMD_LENGTH;
 
         }
-//        else if(request.charAt(5) != ' '){
-//            System.out.println("Invalid command format");
-//            return GlobalErrorMessages.INVALID_CMD_FORMAT;
-//        }
+
         else if(!request.contains("LOGON") && !request.contains("MSGUP")
                 && !request.contains("MSGDL") && !request.contains("LGOFF")
                 && !request.contains("SPMSG")){
@@ -152,8 +149,9 @@ class SMPServerThread implements Runnable {
        StringBuilder sb = new StringBuilder();
 
        for(int i = 0; i < user.messages.size(); i++){
+           sb.append("MSG-" + i + " ");
            sb.append(user.messages.get(i));
-           sb.append(" ");
+           sb.append(";\n ");
            System.out.println(user.messages.get(i));
        }
 

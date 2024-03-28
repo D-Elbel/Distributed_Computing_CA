@@ -12,10 +12,12 @@ public class SMPServer {
             serverPort = Integer.parseInt(args[0]);
 
         try {
-            String ksName = "C:\\Users\\Darragh\\Distributed_Computing_CA\\distributedCompCA\\src\\server\\serverkeystore.jks";
+            System.out.println(System.getProperty("user.dir"));
+            String ksName = "serverkeystore.jks";
             char ksPass[] = "123456".toCharArray();
             KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(new FileInputStream(ksName), ksPass);
+            ks.load(new FileInputStream("src/server/serverkeystore.jks"), ksPass);
+
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
             kmf.init(ks, ksPass);

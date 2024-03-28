@@ -17,7 +17,7 @@ public class SMPClientHelper {
       this.serverHost = InetAddress.getByName(hostName);
       this.serverPort = Integer.parseInt(portNum);
 
-      String tsName = "C:\\Users\\Darragh\\Distributed_Computing_CA\\distributedCompCA\\src\\client\\clienttruststore.jks";
+      String tsName = "src\\client\\clienttruststore.jks";
       char tsPass[] = "123456".toCharArray();
       KeyStore ts = KeyStore.getInstance("JKS");
       ts.load(new FileInputStream(tsName), tsPass);

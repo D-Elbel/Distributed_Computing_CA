@@ -16,7 +16,7 @@ public class SMPClientUI extends JFrame {
     }
 
     private void createUI() {
-        setTitle("Echo Client");
+        setTitle("SMP Client");
         setSize(400, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
