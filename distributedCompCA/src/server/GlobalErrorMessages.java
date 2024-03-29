@@ -11,7 +11,7 @@ public enum GlobalErrorMessages {
     E004_NO_MSG,
     E005_NO_MSGS,
     E006_NO_MSGS_W_ID,
-    E007_INVALD_INVALID_LENGTH,
+    E007_INVALID_LENGTH,
 
     E008_INVALID_MSG_TYPE,
 

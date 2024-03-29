@@ -19,6 +19,7 @@ public class SMPServer {
             ks.load(new FileInputStream("src/server/serverkeystore.jks"), ksPass);
 
 
+            //Used IBM and Stackoverflow as reference for some of this code, links in document
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
             kmf.init(ks, ksPass);
 
@@ -28,7 +29,10 @@ public class SMPServer {
             SSLServerSocketFactory sslServerSocketFactory = sc.getServerSocketFactory();
             SSLServerSocket sslServerSocket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(serverPort);
 
-            System.out.println("Echo server ready.");
+            System.out.println("SMP server ready.");
+
+            System.out.println(sslServerSocket.getSSLParameters());
+
 
             while (true) {
                 System.out.println("Waiting for a connection.");

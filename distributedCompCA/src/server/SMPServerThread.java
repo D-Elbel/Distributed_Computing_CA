@@ -1,5 +1,8 @@
 package server;
 
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
+
 /**
  * This module is to be used with a concurrent Echo server.
  * Its run method carries out the logic of a client session.
@@ -7,7 +10,7 @@ package server;
  */
 
 class SMPServerThread implements Runnable {
-   static final String endMessage = ".";
+   static final String endMessage = "LGOFF";
    MyStreamSocket myDataSocket;
    boolean isLoggedIn;
    UserSession user;
@@ -25,12 +28,17 @@ class SMPServerThread implements Runnable {
     public void run( ) {
       boolean done = false;
       String message;
+
+      SSLSession sslSession = ((SSLSocket) myDataSocket.getSocket()).getSession();
+      System.out.println("Cipher suite used: " + sslSession.getCipherSuite() + " Protocol used: " + sslSession.getProtocol());
+
       try {
          while (!done) {
              message = myDataSocket.receiveMessage( );
              System.out.println("message received: "+ message);
-             if ((message.trim()).equals (endMessage)){
-                System.out.println("Session over.");
+             if (message.equals(endMessage)){
+                 System.out.println("Session over.");
+                myDataSocket.sendMessage(logoff());
                 myDataSocket.close( );
                 done = true;
              }
@@ -56,15 +64,12 @@ class SMPServerThread implements Runnable {
 
         if(request.length() < 5){
             System.out.println("Invalid command length");
-            return GlobalErrorMessages.INVALID_CMD_LENGTH;
+            return GlobalErrorMessages.E007_INVALID_LENGTH;
 
         }
 
-        else if(!request.contains("LOGON") && !request.contains("MSGUP")
-                && !request.contains("MSGDL") && !request.contains("LGOFF")
-                && !request.contains("SPMSG")){
-            System.out.println(!request.contains("LOGON"));
-            System.out.println("Invalid command type");
+        else if(!request.contains("LOGON") && !request.contains("MSGUP") && !request.contains("MSGDL")
+                && !request.contains("LGOFF") && !request.contains("SPMSG")){
             return GlobalErrorMessages.INVALID_CMD_TYPE;
         }
         else{
@@ -74,15 +79,36 @@ class SMPServerThread implements Runnable {
     }
 
     public static String getErrType(GlobalErrorMessages err){
-        if(err == GlobalErrorMessages.INVALID_CMD_LENGTH){
-            return "ERR07 - COMMAND TOO SHORT";
+
+        if(err == GlobalErrorMessages.E007_INVALID_LENGTH){
+            return "ERR07 - INVALID COMMAND LENGTH";
         }
-        else if(err == GlobalErrorMessages.INVALID_CMD_FORMAT){
-            return "ERR08 - INVALID FORMAT";
+        if(err == GlobalErrorMessages.E008_INVALID_MSG_TYPE){
+            return "ERR08 - INVALID COMMAND TYPE";
         }
-        else{
-            return "UNIDENTIFIED ERROR";
+
+       if(err == GlobalErrorMessages.E001_INVALID_AUTH){
+           return "ERR01 - INVALID AUTH FORMAT";
+       }
+
+       if(err == GlobalErrorMessages.E003_INVALID_MSG_FORMAT) {
+           return "ERR03 - INVALID MESSAGE FORMAT";
+       }
+
+        if(err == GlobalErrorMessages.E004_NO_MSG) {
+            return "ERR04 - NO MESSAGE";
         }
+
+        if(err == GlobalErrorMessages.E005_NO_MSGS) {
+            return "ERR05 - NO MESSAGES STORED";
+        }
+
+        if(err == GlobalErrorMessages.E006_NO_MSGS_W_ID) {
+            return "ERR06 - NO MESSAGES WITH PROVIDED ID";
+        }
+
+        return "UNIDENTIFIED ERROR";
+
     }
 
     public String getCommand(String request){
@@ -130,8 +156,14 @@ class SMPServerThread implements Runnable {
     }
 
     public String logon(String username, String password){
+       if (username.length() + password.length() + 7 > 519){
+           return getErrType(GlobalErrorMessages.E001_INVALID_AUTH);
+       }
+
+       //Not implemented for simplicity, username/password validation would be done here
+
        user = new UserSession(username, password);
-       return (username + " has logged on. Welcome! Please Upload a message or Download messages, or Log off");
+       return "USER AUTHENTICATED";
     }
 
     public  String logoff(){
@@ -141,17 +173,31 @@ class SMPServerThread implements Runnable {
     }
 
     public String uploadMessage(String message){
+
+       if(message.length() < 1){
+           return getErrType(GlobalErrorMessages.E004_NO_MSG);
+       }
+
+       if(message.length() + 6 > 1024){
+           return getErrType(GlobalErrorMessages.E003_INVALID_MSG_FORMAT);
+       }
+
+
        user.messages.add(message);
        return "Message uploaded successfully";
     }
 
     public String downloadMessages(){
+       if(user.messages.isEmpty()){
+           return getErrType(GlobalErrorMessages.E005_NO_MSGS);
+       }
+
        StringBuilder sb = new StringBuilder();
 
        for(int i = 0; i < user.messages.size(); i++){
            sb.append("MSG-" + i + " ");
            sb.append(user.messages.get(i));
-           sb.append(";\n ");
+           sb.append(";");
            System.out.println(user.messages.get(i));
        }
 
@@ -159,6 +205,14 @@ class SMPServerThread implements Runnable {
     }
 
     public String downloadSpecificMessage(String messageID){
+
+       if(user.messages.isEmpty()){
+                return getErrType(GlobalErrorMessages.E005_NO_MSGS);
+       }
+
+       if(Integer.parseInt(messageID.replace(" ", "")) > user.messages.size()){
+           return getErrType(GlobalErrorMessages.E006_NO_MSGS_W_ID);
+         }
         System.out.println(messageID);
         return user.messages.get(Integer.parseInt(messageID.replace(" ", "")));
     }

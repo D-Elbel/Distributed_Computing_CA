@@ -54,4 +54,8 @@ public class MyStreamSocket extends Socket {
 		throws IOException {	
       socket.close( );
    }
+
+   public Object getSocket() {
+        return socket;
+   }
 } //end class
